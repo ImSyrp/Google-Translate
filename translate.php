@@ -9,8 +9,8 @@ $targetLanguage = $_POST['targetLanguage'];
 $translatedText = strrev($sourceText);
 
 // Devolver la traducción al cliente
-// "$targetLanguage - ";
-//echo "Soy ese";
+$targetLanguage - ";
+echo "Soy ese";
 
 $scode = $_POST['targetLanguage'];
 $smcode = strtoupper($scode);
