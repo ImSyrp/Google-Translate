@@ -1,7 +1,5 @@
 <?php
 
-echo"hola";return;
-
 // Obtener los valores enviados por AJAX
 $sourceText = $_POST['sourceText'];
 $targetLanguage = $_POST['targetLanguage'];
