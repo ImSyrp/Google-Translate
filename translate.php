@@ -28,12 +28,7 @@ $tstring = $cstring1+4;
 
 $text = $_POST['sourceText'];
 
-if($code == "en"){
-    $text = trim($text);
-    if($text == 'hola'||$text == 'Hola'||$text == 'HOLA'){
-    echo"Hello";return;
-    }
-}
+
 
 $text = str_replace("\n", "<br>", $text);
 
