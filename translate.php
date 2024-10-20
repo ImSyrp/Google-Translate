@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Initialize the TranslationService with your API key
     $apiKey = 'AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw'; // Replace with your actual API key
+    echo $apiKey;
     $translator = new TranslationService($apiKey);
 
     // Check if the target language is supported
