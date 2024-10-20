@@ -1,90 +1,369 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Translator</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #212121;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 { text-align: center; color: #fff; }
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #333;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        textarea, select {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background-color: #444;
-            color: #fff;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover { background-color: #45a049; }
-        #targetText {
-            margin-top: 20px;
-            background-color: #555;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .created-by {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 12px;
-            color: #999;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            const languages = [
-                { code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' },
-                { code: 'fr', name: 'French' }, { code: 'de', name: 'German' },
-                { code: 'zh-CN', name: 'Simplified Chinese' }
-                // Add more languages as needed
-            ];
-            const select = $('#targetLanguage');
-            languages.forEach(lang => select.append(`<option value="${lang.code}">${lang.name}</option>`));
 
-            $('#translateForm').submit(function (event) {
+<html>
+
+<head>
+
+    <title>Traductor</title>
+
+    <style>
+
+        /* Estilos generales */
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background-color: #212121;
+
+            color: #fff;
+
+            margin: 0;
+
+            padding: 20px;
+
+        }
+
+
+
+        h1 {
+
+            text-align: center;
+
+            color: #fff;
+
+        }
+
+
+
+        form {
+
+            max-width: 400px;
+
+            margin: 0 auto;
+
+            background-color: #333;
+
+            padding: 20px;
+
+            border-radius: 5px;
+
+        }
+
+
+
+        textarea {
+
+            width: 100%;
+
+            height: 100px;
+
+            padding: 5px;
+
+            border: 1px solid #555;
+
+            border-radius: 5px;
+
+            resize: vertical;
+
+            margin-bottom: 10px;
+
+            color: #fff;
+
+            background-color: #444;
+
+        }
+
+
+
+        select {
+
+            width: 100%;
+
+            padding: 5px;
+
+            border: 1px solid #555;
+
+            border-radius: 5px;
+
+            margin-bottom: 10px;
+
+            color: #fff;
+
+            background-color: #444;
+
+        }
+
+
+
+        button {
+
+            padding: 10px 20px;
+
+            background-color: #4CAF50;
+
+            color: #fff;
+
+            border: none;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+        }
+
+
+
+        button:hover {
+
+            background-color: #45a049;
+
+        }
+
+
+
+        #targetText {
+
+            margin-top: 20px;
+
+            background-color: #555;
+
+            padding: 20px;
+
+            border-radius: 5px;
+
+            color: #fff;
+
+        }
+
+
+
+        /* Estilos para el texto "Creado por" */
+
+        .created-by {
+
+            position: absolute;
+
+            bottom: 10px;
+
+            left: 10px;
+
+            font-size: 12px;
+
+            color: #999;
+
+        }
+
+
+
+        /* Media queries para ajustar la apariencia en diferentes dispositivos */
+
+        @media screen and (max-width: 480px) {
+
+            form {
+
+                max-width: 300px;
+
+                padding: 10px;
+
+            }
+
+        }
+
+
+
+        @media screen and (min-width: 481px) and (max-width: 768px) {
+
+            form {
+
+                max-width: 500px;
+
+            }
+
+        }
+
+
+
+        @media screen and (min-width: 769px) {
+
+            form {
+
+                max-width: 800px;
+
+            }
+
+        }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+
+            var languages = [
+
+                { code: 'en', name: 'Inglés' },
+
+                { code: 'es', name: 'Español' },
+
+                { code: 'fr', name: 'Francés' },
+
+                { code: 'de', name: 'Alemán' },
+
+                { code: 'it', name: 'Italiano' },
+
+                { code: 'ja', name: 'Japonés' },
+
+                { code: 'ko', name: 'Coreano' },
+
+                { code: 'pt', name: 'Portugués' },
+
+                { code: 'ru', name: 'Ruso' },
+
+                { code: 'zh-CN', name: 'Chino Simplificado' },
+
+                { code: 'ar', name: 'Árabe' },
+
+                { code: 'hi', name: 'Hindi' },
+
+                { code: 'nl', name: 'Holandés' },
+
+                { code: 'vi', name: 'Vietnamita' },
+
+                { code: 'sv', name: 'Sueco' },
+
+                { code: 'tr', name: 'Turco' },
+
+                { code: 'pl', name: 'Polaco' },
+
+                { code: 'id', name: 'Indonesio' },
+
+                { code: 'th', name: 'Tailandés' },
+
+                { code: 'cs', name: 'Checo' },
+
+                { code: 'da', name: 'Danés' },
+
+                { code: 'fi', name: 'Finlandés' },
+
+                { code: 'el', name: 'Griego' },
+
+                { code: 'he', name: 'Hebreo' },
+
+                { code: 'hu', name: 'Húngaro' },
+
+                { code: 'no', name: 'Noruego' },
+
+                { code: 'ro', name: 'Rumano' },
+
+                { code: 'sk', name: 'Eslovaco' },
+
+                { code: 'uk', name: 'Ucraniano' }
+
+                // Agregar más idiomas aquí
+
+            ];
+
+
+
+            var select = $('#targetLanguage');
+
+            for (var i = 0; i < languages.length; i++) {
+
+                var option = $('<option>').val(languages[i].code).text(languages[i].name);
+
+                select.append(option);
+
+            }
+
+
+
+            $('#translateForm').submit(function(event) {
+
                 event.preventDefault();
-                const sourceText = $('#sourceText').val();
-                const targetLanguage = $('#targetLanguage').val();
-                $.post('translate.php', { sourceText, targetLanguage }, function (response) {
-                    $('#targetText').text(response);
-                }).fail(function (xhr) {
-                    console.error(xhr.responseText);
-                });
+
+                var sourceText = $('#sourceText').val();
+
+                var targetLanguage = $('#targetLanguage').val();
+
+                translateText(sourceText, targetLanguage);
+
             });
+
+
+
+            function translateText(sourceText, targetLanguage) {
+
+                $.ajax({
+
+                    url: 'translate.php',
+
+                    type: 'POST',
+
+                    data: {
+
+                        sourceText: sourceText,
+
+                        targetLanguage: targetLanguage
+
+                    },
+
+                    success: function(response) {
+
+                        $('#targetText').text(response);
+
+                    },
+
+                    error: function(xhr, status, error) {
+
+                        console.log(xhr.responseText);
+
+                    }
+
+                });
+
+            }
+
         });
+
     </script>
+
 </head>
+
 <body>
-    <h1>Translator</h1>
+
+    <h1>Traductor</h1>
+
     <form id="translateForm">
-        <textarea id="sourceText" rows="5" placeholder="Enter text to translate"></textarea>
+
+        <label for="sourceText">Texto de origen:</label>
+
+        <textarea id="sourceText" rows="5" placeholder="Ingresa el texto a traducir"></textarea>
+
+        <br>
+
+        <label for="targetLanguage">Idioma objetivo:</label>
+
         <select id="targetLanguage"></select>
-        <button type="submit">Translate</button>
+
+        <br>
+
+        <button type="submit">Traducir</button>
+
     </form>
-    <div class="created-by">Created by: Dylan</div>
-    <h2>Translated Text:</h2>
+
+    <div class="translated-text"></div>
+
+    <div class="created-by">Creado por: Dylan Rodriguez</div>
+
+    <br>
+
+    <h2>Texto traducido:</h2>
+
     <div id="targetText"></div>
+
 </body>
+
 </html>
