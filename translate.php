@@ -1,64 +1,99 @@
 <?php
 
-// TranslationService class handles the core logic of translation
-class TranslationService {
-    private $apiKey = 'AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw';
+// TranslationService class to handle translation logic
+class TranslationService
+{
+    private $apiKey;
+    private $supportedLanguages;
 
-    // Method to translate the given text to the target language
-    public function translate($text, $targetLanguage) {
-        if (empty($text) || empty($targetLanguage)) {
-            return "Please provide both text and target language.";
-        }
-
-        // Simple example of hardcoded translation
-        if ($targetLanguage === 'en' && in_array(strtolower($text), ['hola'])) {
-            return "Hello";
-        }
-
-        $response = $this->callGoogleTranslateAPI($text, $targetLanguage);
-        return $response ?: "Translation failed.";
+    // Constructor to initialize API key and supported languages
+    public function __construct($apiKey)
+    {
+        $this->apiKey = $apiKey;
+        $this->supportedLanguages = $this->initializeLanguageCodes();
     }
 
-    // Calls the Google Translate API and returns the translated text
-    private function callGoogleTranslateAPI($text, $targetLanguage) {
-        $url = 'https://www.googleapis.com/language/translate/v2?key=' . $this->apiKey .
-            '&q=' . rawurlencode($text) . '&target=' . $targetLanguage;
+    // Initialize and return an array of supported language codes (in uppercase)
+    private function initializeLanguageCodes()
+    {
+        $languages = [
+            'af', 'sq', 'am', 'ar', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'bg', 'ca', 'ceb', 'zh', 
+            'zh-CN', 'zh-TW', 'co', 'hr', 'cs', 'da', 'nl', 'en', 'eo', 'et', 'fi', 'fr', 'fy', 
+            'gl', 'ka', 'de', 'el', 'gu', 'ht', 'ha', 'haw', 'he', 'hi', 'hmn', 'hu', 'is', 'ig', 
+            'id', 'ga', 'it', 'ja', 'jv', 'kn', 'kk', 'km', 'rw', 'ko', 'ku', 'ky', 'lo', 'la', 
+            'lv', 'lt', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'mi', 'mr', 'mn', 'my', 'ne', 'no', 
+            'ny', 'or', 'ps', 'fa', 'pl', 'pt', 'pa', 'ro', 'ru', 'sm', 'gd', 'sr', 'st', 'sn', 
+            'sd', 'si', 'sk', 'sl', 'so', 'es', 'su', 'sw', 'sv', 'tl', 'tg', 'ta', 'tt', 'te', 
+            'th', 'tr', 'tk', 'uk', 'ur', 'ug', 'uz', 'vi', 'cy', 'xh', 'yi', 'yo', 'zu'
+        ];
+        return array_map('strtoupper', $languages);
+    }
 
+    // Validate if the target language is supported
+    public function isLanguageSupported($languageCode)
+    {
+        return in_array(strtoupper($languageCode), $this->supportedLanguages);
+    }
+
+    // Perform the translation using the Google Translate API
+    public function translate($text, $targetLanguage)
+    {
+        if ($targetLanguage == 'en' && strtolower(trim($text)) == 'hola') {
+            return 'Hello'; // Simple example translation logic
+        }
+
+        $apiUrl = $this->buildApiUrl($text, $targetLanguage);
+        $response = $this->makeApiRequest($apiUrl);
+
+        return $this->extractTranslatedText($response);
+    }
+
+    // Build the API request URL
+    private function buildApiUrl($text, $targetLanguage)
+    {
+        $encodedText = rawurlencode($text);
+        return "https://www.googleapis.com/language/translate/v2?key={$this->apiKey}&q={$encodedText}&target={$targetLanguage}";
+    }
+
+    // Make the API request and return the response
+    private function makeApiRequest($url)
+    {
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
         $response = curl_exec($curl);
-        if (curl_errno($curl)) {
-            curl_close($curl);
-            return null;
-        }
-
-        $decodedResponse = json_decode($response, true);
         curl_close($curl);
 
-        if (isset($decodedResponse['data']['translations'][0]['translatedText'])) {
-            return htmlspecialchars_decode($decodedResponse['data']['translations'][0]['translatedText'], ENT_QUOTES);
+        return json_decode($response, true);
+    }
+
+    // Extract the translated text from the API response
+    private function extractTranslatedText($response)
+    {
+        if (isset($response['data']['translations'][0]['translatedText'])) {
+            return htmlspecialchars_decode($response['data']['translations'][0]['translatedText'], ENT_QUOTES);
         }
-
-        return null;
+        return 'Error: Translation failed.';
     }
 }
 
-// InputValidator class to validate incoming POST data
-class InputValidator {
-    public static function validate($input) {
-        return htmlspecialchars(trim($input));
-    }
-}
-
-// Main execution logic
+// Main logic to handle the translation request from the AJAX call
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $sourceText = InputValidator::validate($_POST['sourceText'] ?? '');
-    $targetLanguage = InputValidator::validate($_POST['targetLanguage'] ?? '');
+    $sourceText = $_POST['sourceText'] ?? '';
+    $targetLanguage = $_POST['targetLanguage'] ?? '';
 
-    $translator = new TranslationService();
-    echo $translator->translate($sourceText, $targetLanguage);
+    // Initialize the TranslationService with your API key
+    $apiKey = 'AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw'; // Replace with your actual API key
+    $translator = new TranslationService($apiKey);
+
+    // Check if the target language is supported
+    if ($translator->isLanguageSupported($targetLanguage)) {
+        $translatedText = $translator->translate($sourceText, $targetLanguage);
+        echo $translatedText;
+    } else {
+        echo 'Error: Unsupported language.';
+    }
 } else {
-    echo "Invalid request method.";
+    echo 'Error: Invalid request method.';
 }
+
 ?>
